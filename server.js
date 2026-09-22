@@ -1,9 +1,9 @@
-,const express = require('express');
+const express = require('express');
 const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const archivoDatos = path.join(__dirname, 'datos.json');
 
 app.use(express.json());
@@ -17,36 +17,12 @@ app.get('/api/inventario', (req, res) => {
             fs.writeFileSync(archivoDatos, JSON.stringify({ inventario: [] }, null, 2));
         }
         const contenido = fs.readFileSync(archivoDatos, 'utf8');
-        const data = JSON.parse(contenido);
-        res.json(data.inventario || []);
-    } catch (e) {
-        res.json([]);
-    }
-});
-
-// Guardar producto
-app.post('/api/inventario', (req, res) => {
-    try {
-        let data = { inventario: [] };
-        if (fs.existsSync(archivoDatos)) {
-            data = JSON.parse(fs.readFileSync(archivoDatos, 'utf8'));
-        }
-        
-        const nuevo = {
-            id: (data.inventario.length + 1).toString(),
-            nombre: req.body.nombre,
-            precio: Number(req.body.precio),
-            stock: Number(req.body.stock)
-        };
-
-        data.inventario.push(nuevo);
-        fs.writeFileSync(archivoDatos, JSON.stringify(data, null, 2));
-        res.json({ ok: true, producto: nuevo });
-    } catch (e) {
-        res.status(500).json({ error: "No se pudo guardar" });
+        res.json(JSON.parse(contenido));
+    } catch (error) {
+        res.status(500).json({ error: 'Error al leer el inventario' });
     }
 });
 
 app.listen(PORT, () => {
-    console.log(Servidor listo en http://localhost:${PORT});
+    console.log(Servidor corriendo en el puerto ${PORT});
 });
