@@ -1,0 +1,7 @@
+{
+  "name": "pos-colmado",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node servidor.js"
+  }
+}
